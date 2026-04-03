@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulsePlan | Fitness Planner & Health Tracker</title>
+    <meta
+    name = "description"
+    content="PulsePlan is a pure HTML, CSS and vanilla JavaScript fitness Planner with workouts, meals, hydration, goals, calculators and progress tracking."
+    />
+    <link rel = "preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand-block">
+                <div class="brand-mark">PP</div>
+                <div>
+                    <p class="eyebrow">FITNESS SYSTEM</p>
+                    <h1>PulsePlan</h1>
+                </div>
+            </div>
+            <nav class = "side-nav">
+                <a href="#overview" class="nav-link active" data-section-link="overview">
+                    <span>Dashboard</span>
+                </a>
+                <a href="#workouts" class="nav-link" data-section-link="workouts">
+                    <span>Workouts</span>
+                </a>
+                <a href="#nutrition" class="nav-link" data-section-link="nutrition">
+                    <span>Nutrition</span>
+                </a>
+                <a href="#hydration" class="nav-link" data-section-link="hydration">
+                    <span>Hydration</span>
+                </a>
+                <a href="#goals" class="nav-link" data-section-link="goals">
+                    <span>Goals</span>
+                </a>
+                <a href="#progress" class="nav-link" data-section-link="progress">
+                    <span>Progress</span>
+                </a>
+                <a href="#tools" class="nav-link" data-section-link="tools">
+                    <span>Calculators</span>
+                </a>
+            </nav>
+            <section class="sidebar-card">
+                <p class="sidebar-label">TODAY'S INTENSITY</p>
+                <div class="intensity-ring">
+                    <div class="intensity-core">
+                        <strong id="sidebarIntensityScore">0%</strong>
+                        <span>Loaded</span>
+                    </div>
+                </div>
+                <p class="muted-text">
+                    Your score combines workouts, hydration, food consistency and active goals.
+                </p>
+            </section>
+            <section class="sidebar-card compact">
+                <div class="row-between">
+                    <div>
+                        <p class="sidebar-label">STREAK</p>
+                        <strong id="sidebarStreak">0 days</strong>
+                    </div>
+                    <button id="seedDemoBtn" class="ghost-button" type="button">Load Demo</button>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">PERSONAL FITNESS HQ</p>
+                    <h2>Plan stronger days with a single dashboard.</h2>
+                </div>
+                <div class="topbar-actions">
+                    <button id="themeToggleBtn" class="secondary-button" type="button">Toggle Theme</button>
+                    <button id="resetDataBtn" class="primary-button subtle-danger" type="button">Reset Data</button>
+                </div>
+            </header>
+
+            <section id="overview" class="page-section active">
+                <div class="hero-panel">
+                    <div class="hero-copy">
+                        <p class="eyebrow">WEEKLY FOCUS</p>
+                        <h3>Build momentum with workouts, meals and measureable progress.</h3>
+                        <p>
+                            PulsePlan helps you organize training sessions, watch nutrition trends,
+                            hit water targets and keep your health metrics in one clean peace.
+                        </p>
+                        <div class="hero-pills">
+                            <span class="pill" id="heroWorkoutCount">0 workouts scheduled</span>
+                            <span class="pill" id="heroCaloriesCount">0 calories tracked</span>
+                            <span class="pill" id="heroWaterCount">0 ml water today</span>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="orb orb-a"></div>
+                        <div class="orb orb-a"></div>
+                        <div class="summary-stack">
+                            <article class="summary-stack">
+                                <p>Recovery Index</p>
+                                <strong id="recoveryIndex">76%</strong>
+                            </article>
+                            <article class="glass-cards">
+                                <p>Focus Goal</p>
+                                <strong id="focusGoalText">Strength Phase</strong>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
