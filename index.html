@@ -114,7 +114,96 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="stats-grid">
+                    <article class="stats-card accent-cyan">
+                        <p class="stat-label">Workouts This Week</p>
+                        <strong id="statWorkoutsWeek">0</strong>
+                        <span id="statWorkoutMinutes">0 total minutes</span>
+                    </article>
+                    <article class="stats-card accent-orange">
+                        <p class="stat-label">Nutrition Today</p>
+                        <strong id="statCaloriesToday">0 kcal</strong>
+                        <span id="statProteinToday">0g protein logged</span>
+                    </article>
+                    <article class="stat-card accent-lime">
+                        <p class="stat-label">Hydration</p>
+                        <strong id="statWaterToday">0 ml</strong>
+                        <span id="statWaterProgress">0% complete</span>
+                    </article>
+                    <article class="stat-card accent-pink">
+                        <p class="stat-label">Goal Completion</p>
+                        <strong id="statGoalsDone">0 / 0</strong>
+                        <span id="statGoalPercent">0% complete</span>
+                    </article>
+                </div>
+
+                <div class="dashboard-layout">
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>
+                                <p class="section-kicker">ACTIVITY OVERVIEW</p>
+                                <h3>Weekly training load</h3>
+                            </div>
+                            <span class="head-chip">Last 7 days</span>
+                        </div>
+                        <div id="weeklyWorkoutChart" class="bar-chart" aria-label="Weekly workout chart"></div>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>
+                                <p class="section-kicker">TODAY's TARGETS</p>
+                                <h3>Daily rings</h3>
+                            </div>
+                        </div>
+                        <div class="progress-ring-grid">
+                            <article class="ring-card">
+                                <div class="progess-ring" data-ring="steps">
+                                    <div class="progess-ring__value" id="waterRingValue">0%</div>
+                                </div>
+                                <h4>Movement</h4>
+                                <p id="waterRingText">0 / 10000 steps</p>
+                            </article>
+                            <article class="ring-card">
+                                <div class="progess-ring" data-ring="water">
+                                    <div class="progess-ring__value" id="waterRingValue">0%</div>
+                                </div>
+                                <h4>Hydration</h4>
+                                <p id="waterRingText">0 / 3000 ml</p>
+                            </article>
+                            <article class="ring-card">
+                                <div class="progess-ring" data-ring="protein">
+                                    <div class="progess-ring__value" id="proteinRingValue">0%</div>
+                                </div>
+                                <h4>Protein</h4>
+                                <p id="proteinRingText">0 / 140 g</p>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>
+                                <p class="section-kicker">UPCOMING PLAN</p>
+                                <h3>NEXT workouts</h3>
+                            </div>
+                        </div>
+                        <div id="overviewWorkoutList" class="stack-list"></div>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>
+                                <p class="section-kicker">MICRO INSIGHTS</p>
+                                <h3>Coach notes</h3>
+                            </div>
+                        </div>
+                        <div id="insightsList" class="insight-list"></div>
+                    </section>
+                </div>
             </section>
+            
         </main>
     </div>
 </body>
