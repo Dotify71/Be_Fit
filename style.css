@@ -552,3 +552,88 @@ input:focus, select:focus, textarea:focus {
     border: 1px dashed var(--line-strong);
     border-radius: var(--radius-sm);
 }
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+}
+.toast {
+    background-color: var(--panel);
+    border: 1px solid var(--line);
+    padding: 15px 20px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadoe-md);
+    min-width: 250px;
+}
+.toast.success { border-left: 4px solid var(--lime); }
+.toast.error { border-left: 4px solid var(--pink); }
+.quick-water-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 20px 0;
+}
+.tip-stack p {
+    margin-top: 5px;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+    backdrop-filter: blur(4px);
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-content {
+    background-color: var(--card);
+    border: 1px solid var(--line);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    transition: transform var(--transition);
+}
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+.modal-content h3 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+.modal-content p {
+    color: var(--text-soft);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+@media (max-width: 1024px) {
+    .sidebar { width: 220px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .three-column-layout { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .app-shell { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--line); }
+    .dashboard-layout, .two-column-layout, .three-column-layout, .stats-grid {
+        grid-template-columns: 1fr;
+    }    
+}
