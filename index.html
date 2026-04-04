@@ -203,7 +203,209 @@
                     </section>
                 </div>
             </section>
-            210
+            
+            <section id="workouts" class="page-selection">
+                <div class="section-title-row">
+                    <div>
+                        <p class="section-kicker">TRAINING PLANNER</p>
+                        <h3>Program your week and log sessions</h3>
+                    </div>
+                    <span class="head-chip">Strength, cardio, mobility, sports</span>
+                </div>
+                <div class="two-column-layout">
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <h3>Add workout session</h3>
+                        </div>
+                        <form id="workoutForm" class="form-grid">
+                            <label>
+                                Workout name
+                                <input type="text" name="name" placeholder="Upper Body Power" required />
+                            </label>
+                            <label>
+                                Type
+                                <select name="type" required>
+                                    <option value="Strength">Strength</option>
+                                    <option value="Cardio">Cardio</option>
+                                    <option value="Mobility">Mobility</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Recovery">Recovery</option>
+                                </select>
+                            </label>
+                            <label>
+                                Date
+                                <input type="date" name="date" required />
+                            </label>
+                            <label>
+                                Duration (min)
+                                <input type="number" name="duration" min="10" max="240" value="45" required />
+                            </label>
+                            <label>
+                                Intensity
+                                <select name="intesity" required>
+                                    <option value="Low">Low</option>
+                                    <option value="Moderate" selected>Moderate</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </label>
+                            <label>
+                                Calories burned
+                                <input type="number" name="caloriesBurned" min="0" max="3000" value="300" required />
+                            </label>
+                            <label class="full-width">
+                                Focus details
+                                <textarea
+                                name="notes"
+                                rows="4"
+                                placeholder="Main lifts, intervals, mobility focus or how you feel after this workout."
+                                ></textarea>
+                            </label>
+                            <button class="primary-button" type="submit">Save Workout</button>
+                        </form>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>>
+                                <h3>Workout summary</h3>
+                                <p class="card-meta">See your distribution and completion status.</p>
+                            </div>
+                            <div class="inline-chips">
+                                <span class="tiny-chip" id="workoutPendingCount">0 pending</span>
+                                <span class="timy-chip success" id="workoutCompletedCount">0 completed</span>
+                            </div>
+                        </div>
+                        <div id="workoutTypeBreakdown" class="chip-grid"></div>
+                        <div id="workoutList" class="session-list"></div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="nutrition" class="page-section">
+                <div class="section-title-row">
+                    <div>
+                        <p class="section-kicker">MEAL TRACKER</p>
+                        <h3>Log meals and macronutrients</h3>
+                    </div>
+                    <span class="head-chip">Calories, protein, carbs, fats</span>
+                </div>
+                <div class="two-column-layout">
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <h3>Add meal entry</h3>
+                        </div>
+                        <form id="mealForm" class="form-grid">
+                            <label>
+                                Meal name
+                                <input type="text" name="name" placeholder="Grilled Chicken Bowl" required />
+                            </label>
+                            <label>
+                                Meal type
+                                <select name="mealType" required>
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                    <option value="Snack">Snacks</option>
+                                    <option value="Shake">Shake</option>
+                                </select>
+                            </label>
+                            <label>
+                                Date
+                                <input type="date" name="date" required />
+                            </label>
+                            <label>
+                                Calories
+                                <input type="number" name="calories" min="0" max="4000" value="450" required />
+                            </label>
+                            <label>
+                                Protein (g)
+                                <input type="number" name="protein" min="0" max="300" value="30" required />
+                            </label>
+                            <label>
+                                Carbs (g)
+                                <input type="number" name="carbs" min="0" max="500" value="40" required />
+                            </label>
+                            <label>
+                                Notes
+                                <textarea
+                                name="notes"
+                                rows="4"
+                                placeholder="Ingredients, pre-workout timing or what you would improve next time."
+                                ></textarea>
+                            </label>
+                            <button class="primary-button" type="submit">Save Meal</button>
+                        </form>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <div>
+                                <h3>Nutrition dashboard</h3>
+                                <p class="card-meta">Daily intake and meal timing patterns.</p>
+                            </div>
+                        </div>
+                        <div class="macro-summary-grid">
+                            <article class="macro-card">
+                                <span>Calories</span>
+                                <strong id="macroCalories">0</strong>
+                            </article>
+                            <article class="macro-card">
+                                <span>Protein</span>
+                                <strong id="macroProtein">0g</strong>
+                            </article>
+                            <article class="macro-card">
+                                <span>Carbs</span>
+                                <strong id="macroCarbs">0g</strong>
+                            </article>
+                            <article class="macro-card">
+                                <span>Fats</span>
+                                <strong id="macroCarbs">0g</strong>
+                            </article>
+                        </div>
+                        <div id="macroBars" class="macro-bars"></div>
+                        <div id="mealList" class="session-list"></div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="hydration" class="page-section">
+                <div class="section-title-row">
+                    <div>
+                        <p class="section-kicker">WATER TRACKER</p>
+                        <h3>Stay consistent with hydration habits</h3>
+                    </div>
+                    <span class="head-chip">Quick -add cups and daily target</span>
+                </div>
+                <div class="three-column-layout">
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <h3>Hydration settings </h3>
+                        </div>
+                        <form id="hydrationTargetForm" class="form-grid">
+                            <label>
+                                Daily target (ml)
+                                <input type="number" name="target" min="500" max="10000" value="3000" required />
+                            </label>
+                            <label>
+                                Remainder interval
+                                <select name="interval">
+                                    <option value="60">Every 60 min</option>
+                                    <option value="90" selected>Every 120 min</option>
+                                    <option value="120">Every 120 min</option>
+                                    <option value="180">Every 180 min</option>
+                                </select>
+                            </label>
+                            <button class="primary-button" type="submit">Update Target</button>
+                        </form>
+                        <div class="quick-water-grid">
+                            <button class="secondary-button quick-water-btn" data-amount="250" type="button">+250 ml</button>
+                            <button class="secondary-button quick-water-btn" data-amount="500" type="button">+500 ml</button>
+                            <button class="secondary-button quick water btn" data-amount="750" type="button">+750 ml</button>
+                            <button class="secondary-button quick-water-btn" data-amount="1000" type="button">+1000 ml</button>
+                        </div>
+                    </section>
+                </div>
+            </section>
         </main>
     </div>
 </body>
