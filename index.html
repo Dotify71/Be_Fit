@@ -596,13 +596,97 @@
                         <form id="bmiForm" class="form-grid">
                             <label>
                                 Height (cm)
-                                <input type=""
+                                <input type="number" name="height" min="80" max="260" value="172" required />
                             </label>
+                            <label>
+                                Weight (kg)
+                                <input type="number" name="weight" min="20" max="300" step="0.1" value="72" required />
+                            </label>
+                            <button class="primary-button" type="submit">Calculate BMI</button>
                         </form>
+                        <div class="calculator-output" id="bmiOutput">
+                            <strong>0.0</strong>
+                            <p>Enter values to calculate your BMI range.</p>
+                        </div>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <h3>BMR Calculator</h3>
+                        </div>
+                        <form id="bmrForm" class="form-grid">
+                            <label>
+                                Age
+                                <input type="number" name="age" min="10" max="100" value="24" required />
+                            </label>
+                            <label>
+                                Gender
+                                <select name="gender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </label>
+                            <label>
+                                Height (cm)
+                                <input type="number" name="height" min="80" max="260" value="172" required />
+                            </label>
+                            <label>
+                                Weight (kg)
+                                <input type="number" name="weight" min="20" max="300" step="0.1" value="72" required />
+                            </label>
+                            <button class="primary-button" type="submit">Calculate BMR</button>
+                        </form>
+                        <div class="calculator-output" id="bmrOutput">
+                            <strong>0 kcal</strong>
+                            <p>Your resting calorie estimate appears here.</p>
+                        </div>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="card-head">
+                            <h3>Calorie Goal</h3>
+                        </div>
+                        <form id="calorieGoalForm" class="form-grid">
+                            <label>
+                                Maintenance calories
+                                <input type="number" name="maintenance" min="800" max="6000" value="2300" required />
+                            </label>
+                            <label>
+                                Goal
+                                <select name="goal">
+                                    <option value="cut">Fat Loss</option>
+                                    <option value="maintain">Maintain</option>
+                                    <option value="gain">Muscle Gain</option>
+                                </select>
+                            </label>
+                            <button class="primary-button" type="submit">Suggest Target</button>
+                        </form>
+                        <div class="calculator-output" id="calorieGoalOutput">
+                            <strong>0 kcal</strong>
+                            <p>Choose a strategy to see your calorie target.</p>
+                        </div>
                     </section>
                 </div>
             </section>
+            <footer class="footer-note">
+                <p>
+                    Build with seperate HTML, CSS and vanilla JavaScript files. All data is saved in your browser using localStorage.
+                </p>
+            </footer>
         </main>
     </div>
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <div id="resetModal" class="modal-overlay">
+        <div class="modal-overlay">
+            <h3>Rest all fitness tracker data?</h3>
+            <p>This will permanently delete all your workouts, meals, hydration logs and progress entries. This cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="canelResetBtn" class="ghost-button" type="button">Cancel</button>
+                <button id="confirmResetBtn" class="primary-button subtle-danger" type="button">Yes, Reset Data</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js" defer></script>
 </body>
 </html>
