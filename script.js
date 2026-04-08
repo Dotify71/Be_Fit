@@ -374,4 +374,127 @@ function renderOverviewStats() {
     setText("statGoalPercent", `${goalPercent}% complete}`);
     setText("sidebarIntensityScore", `${intensityScore}%`);
     setText("sidebarStreak", `${streakDays} days`);
+
+    const stepsPercent = getPercent(latestSteps, 10000);
+    setRing("steps", stepsPercent, "stepsRingValue", "stepsRingText", `${latestSteps} / 10000 steps`);
+    setRing("water", waterPercent, "waterRingValue", "waterRingText", `${hydrationToday} ml / ${state.hydrationTarget} ml`);
+    setRing("protein", getPercent(proteinToday, 140), "proteinRingValue", "proteinRingText", `${proteinToday} g / 140 g`);
+}
+function setRing(name, percent, valueId, textId, copy) {
+    const ring = document.querySelector(`.progress-ring[data-ring="${name}"]`);
+    ring.computedStyleMap.setProperty("--fill", `${Math.min(percent, 100)}%`);
+    setText(valueId, `${Math.min(percent, 100)}%`);
+    setText(textId,copy);
+}
+function renderWeeklyWorkoutChart() {
+    const container = document.getElementById("weeklyWorkoutChart");
+    const workoutsByDay = getLastSevenDays().map((date) => {
+        const dayWorkouts = state.workoits.filter((workout) => workout.date === date);
+        return {
+            date,
+            label: formatShortDay(date),
+            minutes: sumBy(dayWorkouts, "duration")
+    };
+});
+const maxMinutes = Math.max(...workoutsByDay.map((item) => item.minutes), 60);
+
+container.innerHTML = workoutsByDay
+    .map((item) => {
+        const height = Math.max((item.minutes / maxMinutes) * 100, item.minutes > 0 ? 10 : 4);
+        return `
+            <div class = "bar-chart__item">
+                <div class="bar-chart__value">${item.minutes}m</div>
+                <div class="bar-chart__bar-wrap">
+                    <div class="bar-chart__bar" style="height:${height}%"></div>
+                </div>
+                <div class="bar-chart__label">${item.label}</div>
+            </div>
+            `;
+    })
+    .join("");
+}
+function renderOverviewWorkouts() {
+    const container = document.getElementByIs("overviewWorkoutList");
+    const upcoming = [...state.workouts]
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 4);
+
+    if (!upcoming.length) {
+        container.innerHTML = `<div class="empty-state">No workouts yet. Add your first training session in the workouts section.</div>`;
+        return;
+    }
+    container.innerHTML = upcoming
+        .map(
+            (workout) => `
+            <article class="list-card">
+                <strong>${escapeHTML(workout.name)}</strong>
+                <p>${escapeHTML(workout.type)} · ${escapeHTML(formatFriendlyDate(workout.date))} · ${workout.duration} min</p>
+            </article>
+            `
+        )
+        .join("");
+}
+function renderInsights() {
+    const container = document.getElementById("insightsList");
+    const insights = generateInsights();
+
+    container.innerHTML = insights
+        .map(
+            (insight) => `
+                <article class="insight-card">
+                    <strong>${escapeHTML(insight.title)}</strong>
+                    <p>${escapeHTML(insight.body)}</p>
+                </article>
+            `
+        )
+        .join("");
+}
+function buildInsights() {
+    const hydrationToday = getHydrationTodayAmount();
+    const workoutsThisWeek = getLastSevenDaysWorkouts().length;
+    const mealsToday = state.meals.filter((meal) => meal.date === getTodayISO());
+    const proteinToday = sumBy(mealsToday, "protein");
+    const latestEntry = getLatestProgressEntry();
+    const sleep = latestEntry ? latestEntry.sleep : 0;
+    const insights = [];
+    if (hydrationToday < state.hydrationTarget * 0.5) {
+        insights.push({
+            title: "Hydration needs attention",
+            body: `You are at ${hydrationToday} ml today. Another ${state.hydrationTarget - hydrationToday} ml would put you on track.`
+        });
+    } else {
+        insights.push({
+            title: "Hydration is trending well",
+            body: `You have reached ${getPercent(hydrationToday, state.hydrationTarget)} of your daily target. Keep spacing your intake out.`
+        });
+    }
+    if (workoutsThisWeek >= 4) {
+        insights.push( {
+            title: "Training consistency looks strong",
+            body: `You currently ${workoutsThisWeek} workouts in the last 7 days. Protect sleep and recovery so performance stays high.`
+        });
+    } else {
+        insights.push({
+            title: "Add one more training block",
+            body: `You currently have ${workoutsThisWeek} workouts this week. A short mobility or cardio session could build consistency.`
+        });
+    }
+    if (proteinToday >=120) {
+        insights.push({
+            title: "Protein intake is in a strong range",
+            body: `You logged ${proteinToday}g protein today, which supports muscle recovery and satiety.`
+        });
+    } else {
+        insights.push({
+            title: "Protein target has room to grow",
+            body: `You logged ${proteinToday}g today. A high-protein snack or shake can close the gap quickly.`
+        });
+    }
+    if (sleep > 0) {
+        insights.push({
+            title: "Recovery starts with sleep",
+            body: `Your latest check-in shows ${sleep} hours of sleep. Aim for steady sleep timing to improve energy and performance.`
+        });
+    }
+    return insights.slice(0, 4);
 }
