@@ -498,3 +498,65 @@ function buildInsights() {
     }
     return insights.slice(0, 4);
 }
+
+function renderWorkoutSection() {
+    const list = document.getElementById("workoutList");
+    const breakdown = document.getElementById("workoutTypeBreakdown");
+    const workouts = [...state.workouts].sort((a,b) => new Date(a.date) - new Date(b.date));
+    const completed = workouts.filter((item) => item.completed).length;
+    const pending = workouts.length - completed;
+    setText("workouPendingCount", `${pending} pending`);
+    setText("workoutCompletedCount", `${completed} completed`);
+    const counts = countBy(workouts, "type");
+    breakdown.innerHTML = Object.keys(counts).length
+        ? Object.entries(counts)
+        .map(([type, count]) => `<span> class="tiny-chip>${escapeHTML(type)}: ${count}</span>`)
+        .join("")
+    : `<div class="empty-state">No workouts added yet.</div>`;
+if (!workouts.length) {
+    list.innerHTML = `<div class="empty-state">Build your first workout plan to start tracking reaining load.</div>`;
+    return;
+}
+list.innerHTML = workouts
+    .map(
+        (workout) => `
+            <article class="session-card">
+                <div class="session-top">
+                    <div>
+                        <strong>${escapeHTML(workout.name)}</strong>
+                        <p>${escapeHTML(workout.notes || "No notes added yet.")}</p>
+                    </div>
+                    <div class="session-tags>
+                        <span class="mini-badge highlight">${escapeHTML(workout.type)}</span>
+                        <span class="mini-badge">${escapeHTML(workout.intensity)}</span>
+                        <span class="mini-badge">${workout.duration} min</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <div class="session-tags">
+                        <span class="mini-badge">${escapeHTML(formatFriendlyDate(workout.date))}</span>
+                        <span class="mini-badge warning">${workout.caloriesBurned} kcal burned</span>
+                        <span class="mini-badge ${workout.completed ? "success" : ""}">
+                            ${workout.completed ? "Completed" : "Scheduled"}
+                        </span>
+                    </div>
+                    <div class="session-actions">
+                        <button type="button" data-action="toggle-workout" data-id="${workout.id}">
+                            ${workout.completed ? "Mark Pending" : "Mark Done"}
+                        </button>
+                        <button type="button" data-action="delete-workout" data-id="${workout.id}">Delete</button>
+                    </div>
+                </div>
+            </article>
+        `
+    )
+    .join("");
+list.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("click", handleWorkoutAction);
+});
+}
+function handleWorkoutAction(event) {
+    const { action, id } = event.currentTarget.dataset;
+    if (action === "toggle-workout") {
+        (action)
+} 
