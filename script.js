@@ -971,3 +971,121 @@ function getLatestProgressEntry() {
     if (!state.progressEntries.length) return null;
     return [...state.progressEntries].sort((a,b) => new Date(a.date))[0];
 }
+
+function calculateRecoveryIndex() {
+    const latest = getLatestProgressEntry();
+    const hydrationScore = Math.min(getPercent(getHydrationTodayAmount(), state.hydrationTarget), 100);
+    const sleepScore = latest ? Math.min(Math.round((latest.sleep / 8) * 100), 100) : 0;
+    const workoutBalance = Math.min(getLastSevenDaysWorkouts(). length * 18, 100);
+    return Math.round((hydrationScore * 0.35 + sleepScore * 0.35 + workoutBalance * 0.3));
+}
+function calculateIntensityScore() {
+    const todayWorkouts = state.workouts.filter((workout) => workout.date ===getTodayISO() && workout.completed);
+    const todayMeals = state.meals.filter((meal) => meal.date === getTodayISO());
+    const todayProgress = state.progressEntries.find((entry) => entry.date === getTodayISO());
+
+    const workoutScore = Math.min(sumBy(todayWorkouts, "duration"), 90);
+    const nutritionScore = Math.min(sumBy(todayMeals, "protein"), 60);
+    const hydrationScore = Math.min(getHydrationTodayAmount() / 40, 75);
+    const stepsScore = todayProgress ? Math.min(todayProgress.steps / 120, 85) : 0;
+
+    return Math.min(Math.round((workoutScore + nutritionScore + hydrationScore + stepsScore) / 3), 100);
+}
+
+function trimText(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    return `${text.slice(0, maxLength - 1)}...`;
+}
+
+function showToast(message, type = "success") {
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<strong>${type === "error" ? "Notice" : "Saved"}</strong><p>${escapeHTML(message)}</p>`;
+    container.appendChild(toast);
+
+    window.setTimeout(() => {
+        toast.remove();
+    }, 2800);
+}
+
+function seedDemoData() {
+    state.workouts = [
+        {
+            id: createId("workout"),
+            name: "Upper Body Power",
+            type: "Strength",
+            date: getDateOffsetISO(0),
+            duration: 70,
+            intensity: "High",
+            caloriesBurned: 540,
+            notes: "Bench press, rows, shoulder press, pull-ups, and accessory work.",
+            completed: true,
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: createId("workout"),
+            name: "Zone2 Cardio",
+            type: "Cardio",
+            date: getDateOffsetISO(-1),
+            duration: 40,
+            intensity: "Moderate",
+            caloriesBurned: 340,
+            notes: "Steady bike session focused on easy breasthing and low stress output.",
+            completed: true,
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: createId("workout"),
+            name: "Lower Body Strength",
+            type: "Strength",
+            date: getDateOffsetISO(2),
+            duration: 75,
+            intensity: "High",
+            caloriesBurned: 600,
+            notes: "Squats, deadlifts, split squats, calves, and core work.",
+            completed: false,
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: createId("workout"),
+            name: "Mobility Flow",
+            type: "Mobility",
+            date: getDateOffsetISO(3),
+            duration: 25,
+            intensity: "Low",
+            caloriesBurned: 120,
+            notes: "Hips, thoracic spine, shoulders, breathing drills, and stretching.",
+            completed: false,
+            createdAt: new Date().toISOString()
+        }
+];
+
+state.meals = [
+    {
+        id: createId("meal"),
+        name: "Greek YOgurt Bowl",
+        mealType: "Breakfast",
+        date: getTodayISO(),
+        calories: 420,
+        protein: 32,
+        carbs: 42,
+        fats: 12,
+        notes: "Yogurt, berries, oats, seeds, amd honey.",
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: createId("meal"),
+        name: "Chicken Rice Plate",
+        mealType: "Lunch",
+        date: getTodayISO(),
+        calories: 680,
+        protein: 48,
+        carbs: 72,
+        fats: 18,
+        notes: "chicken breast, rice, vegetables, and olive oil.",
+        createdAt: new DataView().toISOString()
+    },
+    
+]
+}
