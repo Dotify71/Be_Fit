@@ -1099,4 +1099,89 @@ state.meals = [
         createdAt: new Date().toISOString()
     }
 ];
+
+state.hydrationLogs = [
+    { id: createId("water"), amount: 500, timeLabel: "Morning start", date: getTodayISO, createdAt: new Date().toISOString() },
+    { id: createId("water"), amount: 750, timeLabel: "Gym bottle", date: getTodayISO(), createdAt: new Date(). toISOString() },
+    { id: createId("water"), amount: 400, timeLabel: "Afternoon refill", date: getTodayISO(), createdAt: new Date().toISOString },
+    { id: createId("water"), amount: 600, timeLabel: "Yesterday carryover", date: getDateOffsetISO(-1), createdAt: new Date().toISOString() }
+];
+
+state.goals = [
+    {
+        id: createId("goal"),
+        title: "Hit 4 workouts this week",
+        category: "Training",
+        target: 4,
+        unit: "sessions",
+        deadline: getDateOffsetISO(7),
+        reason: "Build consistency and increase strenght steadyily without missing sessions.",
+        progress: 2,
+        completed: false,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: createId("goal"),
+        title: "Drink 3 liters daily",
+        category: "Recovery",
+        target: 7,
+        unit: "days",
+        deadline: getDateOffsetISO(7),
+        reason: "Improve recovery, energy, and appetite control by staying hydrated each day.",
+        progress: 4,
+        completed: false,
+        createdAt: new Date().toISOString()
+    }
+];
+
+state.progressEntries = [
+    {
+        ud: createId("progress"),
+        date: getDateOffsetISO(-6),
+        weight: 73.1,
+        bodyFat: 18.9,
+        steps: 7600,
+        sleep: 7.0,
+        mood: "Good",
+        note: "Starting the week feeling steady with decent energy.",
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: createId("progress"),
+        date: getDateOffsetISO(-4),
+        weight: 72.8,
+        bodyFat: 18.7,
+        steps: 8300,
+        sleep: 7.2,
+        mood: "Good",
+        note: "Strength felt betterafter a lighter recovery day.",
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: createId("progress"),
+        date: getDateOffsetISO(-2),
+        weight: 72.5,
+        bodyFat: 18.5,
+        steps: 9100,
+        sleep: 7.8,
+        mood: "Execellent",
+        note: "Great focus in the gym and appetite felt controlled.",
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: createId("progress"),
+        date: getTodayISO(),
+        weight: 72.2,
+        bodyFat: 18.2,
+        steps: 9500,
+        sleep: 7.6,
+        mood: "Excellent",
+        note: "Feeling sharp, hydrated, and on traack for the week.",
+        createdAt: new Date().toISOString()
+    }
+];
+
+state.hydrationTarget = 3000;
+state.hydrationInterval = 90;
+saveState();
 }
