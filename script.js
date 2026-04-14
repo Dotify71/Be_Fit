@@ -558,5 +558,416 @@ list.querySelectorAll("[data-action]").forEach((button) => {
 function handleWorkoutAction(event) {
     const { action, id } = event.currentTarget.dataset;
     if (action === "toggle-workout") {
-        (action)
-} 
+        state.workouts = state.workouts.map((workout) =>
+            workout.id === id ? { ...workout, completed: !workout.completed } : workout
+        );
+        saveState();
+        renderAll();
+        return;
+    }
+    if (action === "delete-workout") {
+        state.workouts = state.workouts.filter((workout) => workout.id !== id);
+        saveState();
+        renderAll();
+        showToast("Workout removed.", "error");
+    }
+}
+function renderNutritionSelection() {
+    const meals = [...state.meals].sort((a,b) => new Date(b.date) - new Date(a.date));
+    const list = document.getElementById("mealList");
+    const todayMeals = state.meals.filter((meal) => meal.date === getTodayISO());
+    const calories = sumBy(todayMeals, "calories");
+    const protein = sumBy(todayMeals, "protein");
+    const carbs = sumBy(todayMeals, "carbs");
+    const fats = sumBy(todayMeals, "fats");
+    setText("macroCalories", String(calories));
+    setText("macroProtein", `${protein}g`);
+    setText("macroProtein", `${carbs}g`);
+    setText("macroFats", `${fats}g`);
+    renderMacroBars({ protein, caarbs, fats });
+    if (!meals.length) {
+        list.innerHTML = `<div class="empty-state">Track meals to see calorie and macro trends.</div>`;
+        return;
+    }
+    list.innerHTML = meals
+        .slice(0,8)
+        .map(
+            (meal) => `
+            <article class="session-card">
+                <div class="session-top">
+                    <div>
+                        <strong>${escapeHTML(meal.name)}</strong>
+                        <p>${escapeHTML(meal.notes || "No notes for this meal.")}</p>
+                    </div>
+                    <div class="session-tags">
+                        <span class="mini-badge highlight">${escapeHTML(meal.mealType)}</span>
+                        <span class="mini-badge">${meal.calories} kcal</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <div class="session-tags">
+                        <span class="mini-badge">${escapeHTML(formatFriendlyDate(meal.date))}</span>
+                        <span class="mini-badge success">P ${meal.protein}g</span>
+                        <span class="mini-badge">C ${meal.carbs}g</span>
+                        <span class="mini-badge warning">F ${meal.fats}g</span>
+                    </div>
+                    <div class="session-actions">
+                        <button type="button" data-action="delete-meal" data-id="${meal.id}">Delete</button>
+                    </div>
+                </div>
+            </article>
+        `
+        )
+        .join("");
+    
+    list.querySelectorAll('[data-action="delete-meal"]').forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const id = event.currentTarget.dataset.id;
+            state.meals = state.meals.filter((meals) = > meal.id !== id);
+            saveState();
+            renderAll();
+            showToast("Meal removed from log.", "error");
+        });
+    });
+}
+
+function renderMacroBars(data) {
+    const container = document.getElementById("macroBars");
+    const taargets = { protein: 140, carbs: 250, fats: 70};
+
+    container.innerHTML => Object.entries(data)
+    .map(([key,value]) => {
+        const percent = Math.min(getPercent(value, target[key]), 100);
+        return `
+            <div class="macro-bar">
+                <div class="row-between">
+                    <span>${capitalize(key)}</span>
+                    <span>${value} / ${targets[key]} g</span>
+                </div>
+                <div class="macro-bar__track">
+                    <div class="macro-bar__fill ${key}" style="width:${percent}%"></div>
+                </div>
+            </div>
+            `;
+    })
+    .join("");
+}
+function renderHydrationSection() {
+    const amount = getHydrationTodayAmount();
+    const percent = Math.min(getPercent(amount, state.hydrationTarget), 100);
+
+    setText("hydrationAmountText", `${amount} ml`);
+    setText("hydrationTargetText", `Target ${state.hydrationTarget} ml · reminder every ${state.hydrationInterval} min`);
+    document.getElementById("hydrationFill").style.height = `${percent}%`;
+
+    const timeline = document.getElementById("hydrationTimeline");
+    const logs = state.hydrationLogs.filter((log) => log.date === getTodayISO());
+
+    if (!logs.lenght) {
+        timeline.innerHTML = `<div class="empty-state">No water logs yet today. Use a quick-add button to start.<div>`;
+        return;
+    }
+
+    timeline.innerHTML = logs
+    .slice(0, 8)
+    .map(
+        (log) => `
+        <article class="timeline-card">
+            <div>
+                <strong>${log.amount} ml</strong>
+                <p>${escapeHTML(log.timetable)}</p>
+            </div>
+            <div class="session-actions">
+                <button type="button" data-action="delete-water" data-id="${log.id}">Delete</button>
+            </div>
+        </article>
+        `
+    )
+    .join("");
+
+    timeline.querySelectorAll('[data-action="delete-water"]').forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const id = event.currentTarget.dataset.id;
+            state.hydrationLogs = state.hydrationLogs.filter((log) => log.id !== id);
+            saveState();
+            renderAll();
+            showToast("Hydration entry deleted.", "error");
+        });
+    });
+}
+
+function renderGoalsSection() {
+    const list = document.getElementById("goalsList");
+
+    if (!state.goals.length) {
+        list.innerHTML = `<div class="empty-state">Set a goal to start measuring progress.</div>`;
+        return;
+    }
+
+    list.innerHTML = state.goals
+        .map((goal) => {
+            const percent = Math.min(getPercent(goal.progress, goal.target), 100);
+            return `
+                <article class="goal-card">
+                    <div class="goal-top">
+                        <div>
+                            <strong>${escapeHTML(goal.title)}</strong>
+                            <p>${escapeHTML(goal.reason || "No reason added yet.")}</p>
+                        </div>
+                        <div class="goal-meta-row">
+                            <span class="mini-badge highlight">${escapeHTML(goal.category)}</span>
+                            <span class="mini-badge">${escapeHTML(formatFriendlyDate(goal.deadline))}</span>
+                        </div>
+                    </div>
+                    <div class="goal-meta-row">
+                        <span class="mini-badge">${goal.progress} / ${goal.target} ${escapeHTML(goal.unit)}</span>
+                        <span class="mini-badge ${goal.completed ? "success" : ""}">
+                            ${goal.completed ? "Completed" : `${percent}% progress`}
+                        </span>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="goal-progress__fill" style="width:${percent}%"></div>
+                    </div>
+                    <div class="goal-actions">
+                        <button type="button" data-action="goal-plus" data-id="${goal.id}">+1 Progress</button>
+                        <button type="button" data-action="goal-minus" data-id="${goal.id}">-1 Progress</button>
+                        <button type="button" data-action="goal-complete" data-id="${goal.id}">
+                            ${goal.completed ? "Reopen" : "Complete"}
+                        </button>
+                        <button type="button" data-action="goal-delete" data-id="${goal.id}">Delete</button>
+                    </div>
+                </article>
+            `;
+        })
+        .join("");
+    
+    list.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", handleGoalAction);
+    });
+}
+
+function handleGoalAction(event) {
+    const { action, id } = event.currentTarget.dataset;
+
+    if (action === "goal-delete") {
+        state.goals = state.goals.filter((goal) => goal.id !== id);
+        showToast("Goal removed.", "error");
+    } else {
+        state.goals = state.goals.map((goal) => {
+            if (goal.if !== id) return goal;
+
+            if (action === "goal-plus") {
+                const progress = Math.min(goal.progress + 1, goal.target);
+                return { ...goal, progress, completed: progress >= goal.target || goal.completed };
+            }
+
+            if (action === "goal-minus") {
+                const progress = Math.max(goal.progress - 1, 0);
+                return { ...goal, progress, completed: progress >=goal.target && goal.completed };
+            }
+
+            if (action === "goal-complete") {
+                return{ ...goal, completed: !goal.completed, progress: !goal,completed ? goal.target : goal.progress };
+            }
+            return goal;
+        });
+    }
+
+    saveState();
+    renderAll();
+}
+
+function renderProgressSection() {
+    const list = document.getElementById("progressList");
+    const chart = document.getElementById("progressTrendChart");
+    const entries = [...state.progressEntries].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (!entries.length) {
+        chart.innerHTML = `<div class = "empty-state">Add progress check-ins to view trend lines.</div>`;
+        list.innerHTML = `<div class="empty-state">Yoursaved check-ins will appear here.</div>`;
+        return;
+    }
+
+    const latestSeven = entries.slice(-7);
+    const maxWeight = Math.max(...latestSeven.map((entry) => entry.weight), 1);
+
+    chart.innerHTML = latestSeven
+        .map((entry) => {
+            const height = Math.max((entry.weight / maxWeight) * 170, 36);
+            return `
+                <div class="line-chart__point-wrap">
+                    <div class="line-chart__value">${entry.weight.toFixed(1)} kg</div>
+                    <div class="line-chart__line" style="height:${height}px></div>
+                    <div class="line-chart__dot"></div>
+                    <div class="line-chart__label">${formatShortDay(entry.date)}</div>
+                </div>
+            `;
+        })
+        .join("");
+    
+    list.innerHTML = [...entries]
+        .reverse()
+        .slice(0, 8)
+        .map(
+            (entry) => `
+                <article class="session-card">
+                    <div class = "session-otp">
+                        <div>
+                            <strong>${escapeHTML(formatFriendlyDate(entry.date))}</strong>
+                            <p>${escapeHTML(entry.note || "No reflection added.")}</p>
+                        </div>
+                    </div>
+                    <div class = "session-tags">
+                        <span class = "mini-badge">${entry.weight} kg</span>
+                        <span class = "mini-badge">${entry.bodyFat}% body fat</span>
+                    </div>
+                    <div class = "session-meta">
+                        <div class = "session-tags">
+                            <span class = "mini-badge hightlight">${entry.steps} steps</span>
+                            <span class = "mini-badge">${entry.sleep}h sleep</span>
+                            <span class = "mini-badge warning">${escapeHTML(entry.mood)}</span>
+                        </div>
+                        <div classs = "session-actions">
+                            <button type = "button" data-action = "delete-progress" data-id = ${entry.id}">Delete</button>
+                        </div>
+                    </div>
+                <article>
+            `
+        )
+        .join("");
+
+    list.querySelectorAll('[data-action = "delete-progress"]').forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const id = event.currentTarget.dataset.id;
+            state.progress = state.progressEntries.filter((entry) => entry.id !== id);
+            saveState();
+            renderAll();
+            showToast("Progress entry deleted.", "error");
+        });
+    });
+}
+
+function getHydrationTodayAmount() {
+    return state.hydrationLogs
+        .filter((log) => log.date ===getTodayISO())
+        .reduce((total, log) => total + Number(log.amount || 0), 0);
+}
+
+function getLastSevenDaysWorkouts() {
+    const dates = new setRing(getLastSevenDays());
+    return state.workouts.filter((workout) => dates.has(workout.date));
+}
+
+function getLastSevenDays() {
+    const days = [];
+    for (let offset = 6; offset >= 0; offset -=1) {
+        days.push(getDateOffsetISO(-offset));
+    }
+    return days;
+}
+
+function getTodayISO() {
+    return formatDateISO(new Date());
+}
+
+function getDateOffsetISO(offset) {
+    const now = new Date();
+    now.setDate(now.getDate() + offset);
+    return formatDateISO(now);
+}
+
+function formatFriendlyDate(dateString) {
+    const date = new Date(`${dateString}T00:00:00`);
+    return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    });
+}
+function formatShortDay(dateString) {
+    const date = new Date(`${dateString}T00:00:00`);
+    return date.toLocaleDateString(undefined, {
+        weekday: "short"
+    });
+}
+
+function createId(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function cloneState(data) {
+    return JSON.parse(JSON.stringify(date));
+}
+
+function formatDateISO(date) {
+    const year = date.getFullYear ();
+    const month = String(date.getMonth() +1).padStart(1, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function sumBy(items, key) {
+    return items.reduce((total, item) => total + Number(item[key] || 0), 0);
+}
+
+function countBy(items, key) {
+    return items.reduce((accumulator, item) => {
+        const value = item[key] ||"Other";
+        accumulator[value] = (accumulator[value] || 0) + 1;
+        return accumulator;
+    }, {});
+}
+
+function capitalize(test) {
+    return text.charAt(0).toUpperCase() + test.slice(1);
+}
+
+function sanitize(value) {
+    return String(value || "").trim();
+}
+
+function escapeHTML(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+}
+
+function getPercent(value, total) {
+    if (!total) return 0;
+    return Math.round((value / total) * 100);
+}
+
+function calculateStreak() {
+    const dates = new Set();
+    state.workouts
+        .filter((workout) => workout.completed)
+        .forEach((workout) => dates.add(workout.date));
+    state.meals.forEach((meal) => dates.add(log.date));
+    state.progressEntries.forEach((entry) => dates.add(entry.date));
+
+    let streak = 0;
+    for (let offset = 0; offset < 30; offset += 1) {
+        const date = getDateOffsetISO(-offset);
+        if (dates.has(date)) {
+            streak += 1;
+        } else if (offset === 0) {
+            continue;
+        } else {
+            break;
+        }
+    }
+    return streak;
+}
+
+function getLatestProgressEntry() {
+    if (!state.progressEntries.length) return null;
+    return [...state.progressEntries].sort((a,b) => new Date(a.date))[0];
+}
