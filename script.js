@@ -1064,7 +1064,7 @@ function seedDemoData() {
 state.meals = [
     {
         id: createId("meal"),
-        name: "Greek YOgurt Bowl",
+        name: "Greek Yogurt Bowl",
         mealType: "Breakfast",
         date: getTodayISO(),
         calories: 420,
@@ -1084,8 +1084,19 @@ state.meals = [
         carbs: 72,
         fats: 18,
         notes: "chicken breast, rice, vegetables, and olive oil.",
-        createdAt: new DataView().toISOString()
+        createdAt: new Data().toISOString()
     },
-    
-]
+    {
+        id: createId("meal"),
+        name: "Protein Shake",
+        mealType: "Lunch",
+        date: getTodayISO(),
+        calories: 680,
+        protein: 48,
+        carbs: 72,
+        fats: 18,
+        notes: "Whey, milk, banana, and peanut butter.",
+        createdAt: new Date().toISOString()
+    }
+];
 }
